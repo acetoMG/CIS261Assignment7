@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 14.15.26726.0	    10/25/18 09:49:42
+Microsoft (R) Macro Assembler Version 14.15.26726.0	    10/30/18 09:27:00
 ABC.asm							     Page 1 - 1
 
 
@@ -27,7 +27,35 @@ ABC.asm							     Page 1 - 1
  00000010  C3			    ret
  00000011			_main ENDP
 				END _main       ; Marks the end of the module and sets the program entry point label
-Microsoft (R) Macro Assembler Version 14.15.26726.0	    10/25/18 09:49:42
+
+				;volume 2 list of instructions
+				;http://www.c-jump.com/CIS77/reference/Intel/CIS77_24319102/index.html
+				;opcode format documentation
+				;http://www.c-jump.com/CIS77/reference/Intel/CIS77_24319102/pg_0042.htm
+				;Encoding Real x86 Instructions
+				;http://c-jump.com/bcc/c261c/CPU/x86/lecture.html
+				;
+				;http://www.c-jump.com/CIS77/reference/Intel/CIS77_24319102/pg_0496.htm
+				;774B1001   74 0C            JE SHORT ntdll.774B100F
+				;00DA1005 >/$ E9 06000000    JMP M07.00DA1010
+
+										   imm8 = 'X'
+				;00DC1010     C6 05 0040DC00 58      >MOV BYTE PTR DS:[DC4000],58
+							  |  |				      Mod  Reg  R/M
+							  |  |_Mod R/M byte:      00   000  101  == 32-Bit Displacement-Only Mode
+							  |_opcode
+
+				;00DC1017     C605 0140DC00 59 >MOV BYTE PTR DS:[DC4001],59
+				;00DC101E  |. 90               NOP
+				;00DC101F  |. 90               NOP
+				;00DC1020  \. C3               RETN
+
+				;C6 /0 MOV r/m8, imm8 Move imm8 to r/m8
+
+
+
+
+Microsoft (R) Macro Assembler Version 14.15.26726.0	    10/30/18 09:27:00
 ABC.asm							     Symbols 2 - 1
 
 
