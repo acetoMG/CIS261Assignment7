@@ -4,23 +4,25 @@ Why are there more than one module in this view?
 1.) There's more than one module in the view because windows is importing default modules.
 
 Which CPU register contains the address of the next executable instruction?
-2.) 
+2.) ECX 002C1005 MO7.<ModuleEntryPoint>
 
 What is the address of the next executable instruction?
-3.) 
+3.) 002C1010
 
 What is the next executable instruction as shown by OllyDbg?
-4.) 
+4.) NOP 002C1011
 
 Examine the view and briefly describe what do you see in the window.
-5.) 
+5.) I see a memory address map of all the instructions in the program. All the M07 data obcts like .text, .rdata, .data..
 
 In your own words, explain the purpose of
 
     .text
     .rdata
     .data
-6.) 
+6.)  .data holds our data objects
+     .rdata is for const data. Read-only version of .data
+     .text is read-only data
 
 In your own words, explain what do you see in the Disassembler window.
 7.) 
@@ -34,26 +36,77 @@ In its .CODE segment. What happened to the original line of code? What do you se
 
 
 What is the starting address of each character?
-9.) 00DC4000 'A'
-    00DC4001 'B'
-    00DC4002 'C"
+9.) 00DC4000 = 'A'
+    00DC4001 = 'B'
+    00DC4002 = 'C'
 
 
 Copy and paste the result of your modification here:
 10.) 
+
 How many bytes does the MOV instruction occupy?
-11.)
+11.) 7 bytes per MOV.
+
 Why the "XYZ" problem cannot be solved by simply entering the three of the above MOV instructions in a row?
-12.) 
+12.) Not enough bytes in the NOP to move all three. Can only move two.
+
 Why BYTE PTR operator was needed by the destination operand of the MOV instruction?
-13.) 
+13.) We have to specify the byte size of the operand. 
+
 Explain the logic of the new solution:
-14.) 
+14.) We try to increment the address and the character. This will eventually replace the characters with 'A' 'B' and 'C'
+with 'X' 'Y' and 'Z'
+
 Copy and paste the result of your latest modifications from the Disassembly window here:
-15.) 
+15.) 010F1010     BF 00400F01    MOV EDI,M07.010F4000                     ;  ASCII "XYZ"
+     010F1015     B0 58          MOV AL,58
+     010F1017     8807           MOV BYTE PTR DS:[EDI],AL
+     010F1019     47             INC EDI
+     010F101A     FEC0           INC AL
+     010F101C     3C 5A          CMP AL,5A
+     010F101E    ^7E F7          JLE SHORT M07.010F1017
+
+
+
 What is the instruction opcode? If possible, provide additional info about specific bit fields in the opcode:
-16.)
+16.) 010F1010     BF 00400F01    MOV EDI,M07.010F4000                     ;  ASCII "XYZ"
+		  Opcode = B8
+			  + rd = register code(7), from 0 through 7 = EDI
+ 				MOV r32, imm32
+     010F1015     B0 58          MOV AL,58
+		  Opcode = B0 
+		  + rb register code(0), from 0 through 7 = AL
+		  MOV r8, imm8
+
+     010F1017     8807           MOV BYTE PTR DS:[EDI],AL
+		  Opcode = 88 /r = Indicaes Mod R/M byte contains both reg and reg / mem
+						Mod Reg R/M
+				 Mod R/M  = 07h = 00 000 111
+				                     AL	[edi]
+				 MOV r/m8, r8
+     010F1019     47             INC EDI
+		  opcode = 40
+			+ rd = 7 = register code 0 through 7 = EDI
+			       INC r32 Increment doublword register
+     010F101A     FEC0           INC AL
+	          opcode = FE 
+			   /0 = Mod R/M byte of the instruction uses only the r/m(register or memory) operand
+				        Mod Reg R/M
+					0C0h = 11 000 000 = AL
+					INC r/m8
+     010F101C     3C 5A          CMP AL,5A
+	          opcode = 3C ib
+				 CMP AL, imm8 = 5a ('X')
+
+     010F101E    ^7E F7          JLE SHORT M07.010F1017
+	         opcode = 7E 
+			   cb = code offset = F7 = -9
+			        JLE rel8
+
+010F1020	 C3			    RETN
+
 Does the instruction include Mod-R/M byte? If so, explain briefly how Mod-R/M fields are used:
-17.) 
+17.) Yes the Mod R/M byte is present in the instruction. It uses only the r/m(register or memory) operand.
+
 Explain the presence of any additional bytes in the instruction format (for example, the immediate value):
 18.)
